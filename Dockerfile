@@ -1,8 +1,11 @@
-# Use the Rocker R image with Plumber pre-installed
-FROM rocker/plumber
+# Use the Rocker base image with R
+FROM rocker/r-ver:4.3.1
 
-# Copy the R script into the Docker image
+# Install plumber
+RUN R -e "install.packages('plumber')"
+
+# Copy your R script into the Docker image
 COPY api.R /api.R
 
-# Run the Plumber API when the container starts
+# Set the command to run the Plumber API
 CMD ["R", "-e", "pr <- plumber::plumb('/api.R'); pr$run(host = '0.0.0.0', port = 8000)"]
