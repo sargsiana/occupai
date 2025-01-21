@@ -1,24 +1,31 @@
-library(jsonlite)
+library(plumber)
 
-data <- read.csv("input.csv")
+# Define a function to process the survey data
+#* @post /process_survey
+#* @param req The incoming request
+#* @serializer unboxedJSON
+function(req) {
+  # Parse the JSON input
+  input_data <- jsonlite::fromJSON(req$postBody)
 
-data[sapply(data, is.numeric)] <- data[sapply(data, is.numeric)] + 1
+  # Ensure the input contains the required 'score' field
+  if (!"score" %in% names(input_data)) {
+    return(list(error = "Input JSON must include a 'score' field with an array of numbers."))
+  }
 
-i <- 0
-summe <- 0
-for (val in data) {
-    if (i != 0){
-        summe = summe + as.integer(val)
-    }
-    i = i+1
-  
+  # Perform processing (example: calculate mean)
+  scores <- input_data$score
+  if (!is.numeric(scores)) {
+    return(list(error = "The 'score' field must contain numeric values."))
+  }
+
+  # Calculate summary statistics
+  result <- list(
+    mean_score = mean(scores),
+    min_score = min(scores),
+    max_score = max(scores),
+    count = length(scores)
+  )
+
+  return(result)
 }
-
-png('filename.png')
-plot(summe)
-
-result <- data.frame(summe = summe)
-exportJSON <- toJSON(result)
-write(exportJSON, "output.json")
-
-while (!is.null(dev.list()))  dev.off()
