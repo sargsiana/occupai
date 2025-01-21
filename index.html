@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Check API</title>
+</head>
+<body>
+    <h1>Welcome to the Health Check API</h1>
+    <p>This is the landing page for the Health Check API hosted on Fly.io.</p>
+    <p>Use the endpoint <code>/process_survey</code> to send survey data as a JSON payload.</p>
+    <h3>Example Payload:</h3>
+    <pre>{
+  "score": [4, 3, 2, 1]
+}</pre>
+    <h3>Expected Response:</h3>
+    <pre>{
+  "mean_score": 2.5,
+  "min_score": 1,
+  "max_score": 4,
+  "count": 4
+}</pre>
+</body>
+</html>
