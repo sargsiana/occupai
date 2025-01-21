@@ -1,14 +1,21 @@
-# Use a base image with R
-FROM rocker/r-ver:4.3.1
+# Example Dockerfile
+FROM r-base:latest
 
-# Install Plumber and JSONlite
-RUN R -e "install.packages(c('plumber', 'jsonlite'))"
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    libcurl4-openssl-dev \
+    libssl-dev \
+    libxml2-dev
 
-# Copy the R script into the container
-COPY api.R /api.R
+# Install plumber
+RUN R -e "install.packages('plumber')"
 
-# Expose the port (Railway uses dynamic ports)
+# Copy your app files
+COPY . /app
+WORKDIR /app
+
+# Expose the port for Plumber API
 EXPOSE 8000
 
-# Start the Plumber API
-CMD ["R", "-e", "pr <- plumber::plumb('/api.R'); pr$run(host = '0.0.0.0', port = as.numeric(Sys.getenv('PORT')) )"]
+# Run the Plumber API
+CMD ["R", "-e", "pr <- plumber::plumb('api.R'); pr$run(host='0.0.0.0', port=8000)"]
